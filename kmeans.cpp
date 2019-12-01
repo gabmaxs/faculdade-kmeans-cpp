@@ -13,7 +13,7 @@ typedef pair<TYPE_DATA, TYPE_DATA> simple_point;
 typedef map<simple_point, string> point;
 typedef map<point, vector<double>> distances;
 
-const string labels[15] = {
+const string colors[15] = {
     "#0000ff",
     "#ff0000",
     "#ffff00",
@@ -38,7 +38,7 @@ point generate_centroids(const int K, int size) {
         const int x = rand()%size;
         const int y = rand()%size;
         simple_point point = make_pair(x,y);
-        centroids.insert(make_pair(point,labels[i]));
+        centroids.insert(make_pair(point,colors[i]));
     }
 
     return centroids;
@@ -92,7 +92,7 @@ simple_point move_centroids(pair<simple_point, string> centroid, point points) {
     return new_position;
 }
 
-void save_result(point centroids, point data, int number_time, int K, string file_name = "saida.txt") {
+void save_result(point centroids, point data, int number_time, int K, string file_name) {
 
     ofstream myfile;
     myfile.open("saidas/" + file_name);
@@ -135,7 +135,7 @@ void save_result(point centroids, point data, int number_time, int K, string fil
     myfile.close();
 }
 
-void kmeans(const int K, point data, int size){
+void kmeans(const int K, point data, int size, string file_name){
     cout << "INICIANDO KMEANS" << endl;
 
     // cout << "IMPRIMINDO DADOS" << endl;
@@ -224,7 +224,7 @@ void kmeans(const int K, point data, int size){
         cout << " Centroide: " << point.second << endl;
     }
 
-    save_result(centroids, data, m, K);
+    save_result(centroids, data, m, K, file_name);
 }
 
 point read_data(){
@@ -252,17 +252,21 @@ int getGraphSize(point data) {
     return biggest;
 }
 
-int main() {
+int main(int argc, char *argv[]) {
     const int K = 15;
     point data;
 
-    
+    string file = "saida.txt";
 
+    if(argv[1] == string("-f")) {
+        file = argv[2];
+    }
+    
     cout << "LENDO ENTRADA" << endl;
     data = read_data();
 
     int size = getGraphSize(data);
-    kmeans(K, data, size);
+    kmeans(K, data, size, file);
 
     return 0;
 }
