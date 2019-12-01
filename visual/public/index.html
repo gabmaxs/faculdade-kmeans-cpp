@@ -8,8 +8,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css">
 </head>
 <body>
+    <label>Escolha o arquivo gerado após executar o algoritmo</label><br>
     <input type="file" accept="text/plain" onchange="openFile(event)">
-    <canvas id="chart" width="100px" height="100px"></canvas>
+    <h1>Gráfico sem clusterização</h1><br>
+    <div class="graph">
+        <canvas style="display: none" id="chartBefore" width="400" height="400"></canvas><br>
+    </div>
+    <h1>Gráfico clusterizado</h1><br>
+    <div class="graph">
+        <canvas style="display: none" id="chart" width="400" height="400"></canvas><br>
+    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
     <script src="../index.js"></script>
 </body>

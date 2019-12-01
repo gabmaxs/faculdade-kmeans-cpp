@@ -35,14 +35,42 @@ const getClustersColors = () => {
 
 
 const initGraph = () => {
-    const ctx = document.getElementById('chart')
+    const ctxBefore = document.getElementById('chartBefore')
+    ctxBefore.style.display = "block"
 
-    const myChart = new Chart(ctx, {
+    new Chart(ctxBefore, {
         type: 'scatter',
         data: {
             labels: "",
             datasets: [
                 {
+                    label: "",
+                    data: my_data,
+                    pointBackgroundColor: "#000",
+                }
+            ],
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    type: 'linear',
+                    position: 'bottom'
+                }]
+            }
+        }
+    })
+
+
+    const ctx = document.getElementById('chart')
+    ctx.style.display = "block"
+
+    new Chart(ctx, {
+        type: 'scatter',
+        data: {
+            labels: "",
+            datasets: [
+                {
+                    label: "",
                     pointStyle: "triangle",
                     data: clusters,
                     pointBackgroundColor: getClustersColors(),
@@ -51,9 +79,9 @@ const initGraph = () => {
                     pointHoverRadius: 8,
                 },
                 {
+                    label: "",
                     data: my_data,
                     pointBackgroundColor: getPointsColors(),
-                    fill: 'origin'
                 }
                 
             ],
@@ -91,5 +119,3 @@ const openFile = function(event) {
     }  
     reader.readAsText(input.files[0])
 }
-
-//initGraph()
