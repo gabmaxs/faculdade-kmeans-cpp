@@ -4,6 +4,7 @@
 #include<ctime>
 #include<cmath>
 #include<string>
+#include<fstream>
 
 using namespace std;
 
@@ -12,12 +13,30 @@ typedef pair<TYPE_DATA, TYPE_DATA> simple_point;
 typedef map<simple_point, string> point;
 typedef map<point, vector<double>> distances;
 
-point generate_centroids(const int K,const string *labels) {
+const string labels[15] = {
+    "#0000ff",
+    "#ff0000",
+    "#ffff00",
+    "#66ff66",
+    "#ff0099",
+    "#808080",
+    "#ff8000",
+    "#8000ff",
+    "#c0c0c0",
+    "#00ffff",
+    "#008080",
+    "#000080",
+    "#800000",
+    "#00ff00",
+    "#808000"
+};
+
+point generate_centroids(const int K, int size) {
     srand(time(NULL));
     point centroids;
     for(int i = 0; i < K; i++) {
-        const int x = rand()%5;
-        const int y = rand()%5;
+        const int x = rand()%size;
+        const int y = rand()%size;
         simple_point point = make_pair(x,y);
         centroids.insert(make_pair(point,labels[i]));
     }
@@ -73,7 +92,50 @@ simple_point move_centroids(pair<simple_point, string> centroid, point points) {
     return new_position;
 }
 
-void kmeans(const int K, point data, const string *labels){
+void save_result(point centroids, point data, int number_time, int K, string file_name = "saida.txt") {
+
+    ofstream myfile;
+    myfile.open("saidas/" + file_name);
+
+    myfile << "RESULTADOS FINAIS" << endl;
+    myfile << "ERAS NECESSARIAS " << number_time << endl;
+
+    myfile << "IMPRIMINDO CENTROIDES" << endl;
+    for(auto& centroid: centroids){
+        myfile << "COR: " << centroid.second << " X: " << centroid.first.first << " Y: " << centroid.first.second << endl;
+    }
+
+    myfile << "IMPRIMINDO  PONTOS" << endl;
+    for(auto& point: data) {
+        myfile << "PONTO ";
+        myfile << "X: " << point.first.first << " Y: " << point.first.second;
+        myfile << " Centroide: " << point.second << endl;
+    }
+
+    myfile.close();
+
+    //SAIDA PARA ARQUIVO NORMAL
+
+    myfile.open("saidas_numeros/" + file_name);
+
+    myfile << number_time << endl;
+
+    myfile << K << endl;
+
+
+    for(auto& centroid: centroids){
+        myfile << centroid.first.first << " " << centroid.first.second << " " << centroid.second << endl;
+    }
+
+    for(auto& point: data) {
+        myfile << point.first.first << " " << point.first.second;
+        myfile << " " << point.second << endl;
+    }
+
+    myfile.close();
+}
+
+void kmeans(const int K, point data, int size){
     cout << "INICIANDO KMEANS" << endl;
 
     // cout << "IMPRIMINDO DADOS" << endl;
@@ -82,8 +144,10 @@ void kmeans(const int K, point data, const string *labels){
     // }
 
     cout << "GERANDO CENTROIDES" << endl;
-    point centroids = generate_centroids(K,labels);
+    point centroids = generate_centroids(K, size);
     point copy_centroids = centroids;
+    point new_centroids;
+    
     // cout << "IMPRIMINDO CENTROIDES" << endl;
     // for(auto& centroid: centroids){
     //     cout << "COR: " << centroid.second << " X: " << centroid.first.first << " Y: " << centroid.first.second << endl;
@@ -103,38 +167,44 @@ void kmeans(const int K, point data, const string *labels){
     int m = 0;
     do {
         copy_centroids = centroids;
-        cout << "IMPRIMINDO CENTROIDES ERA :" << m+1 << endl;
-        for(auto& centroid: centroids){
-            cout << "COR: " << centroid.second << " X: " << centroid.first.first << " Y: " << centroid.first.second << endl;
-        }
+        // cout << "ERA: " << m+1 << endl;
+        // cout << "IMPRIMINDO CENTROIDES ERA :" << m+1 << endl;
+        // for(auto& centroid: centroids){
+        //     cout << "COR: " << centroid.second << " X: " << centroid.first.first << " Y: " << centroid.first.second << endl;
+        // }
 
         // cout << "IMPRIMINDO CENTROIDE ANTES" << endl;
-        cout << "IMPRIMINDO  PONTOS" << endl;
-        for(auto& point: data) {
-            cout << "PONTO ";
-            cout << "X: " << point.first.first << " Y: " << point.first.second;
-            cout << " Centroide: " << point.second << endl;
-        }
+        // cout << "IMPRIMINDO  PONTOS" << endl;
+        // for(auto& point: data) {
+        //     cout << "PONTO ";
+        //     cout << "X: " << point.first.first << " Y: " << point.first.second;
+        //     cout << " Centroide: " << point.second << endl;
+        // }
 
-        cout << "ANDANDO O CENTROIDE" << endl;
+        // cout << "ANDANDO O CENTROIDE" << endl;
         for(auto& centroid: centroids) {
             string color = centroid.second;
             simple_point new_point = move_centroids(centroid, data);
-            centroids.erase(centroid.first);
-            centroids.insert(make_pair(new_point, color));
+            pair<simple_point, string> new_centroid = make_pair(new_point, color);
+            new_centroids.insert(new_centroid);
         }
+        centroids.clear();
+        centroids = new_centroids;
+        new_centroids.clear();
+        
+        // cout << "IMPRIMINDO CENTROIDE DEPOIS" << endl;
+        // cout << "ERA: " << m+1 << endl;
+        // for(auto& centroid: centroids) {
+        //     cout << "PONTO ";
+        //     cout << "X: " << centroid.first.first << " Y: " << centroid.first.second;
+        //     cout << " Centroide " << centroid.second << endl;
+        // }
 
-        cout << "ATUALIZANDO CETROIDE" << endl;
+        // cout << "ATUALIZANDO CETROIDE" << endl;
         for(auto& point: data) {
             point.second = get_new_centroid(point.first, centroids);
         }
 
-        // cout << "IMPRIMINDO CENTROIDE DEPOIS" << endl;
-        // for(auto& point: data) {
-        //     cout << "PONTO ";
-        //     cout << "X: " << point.first.first << " Y: " << point.first.second;
-        //     cout << " Centroide " << point.second << endl;
-        // }
         m++;
     }while(centroids_change(centroids, copy_centroids));
 
@@ -153,26 +223,46 @@ void kmeans(const int K, point data, const string *labels){
         cout << "X: " << point.first.first << " Y: " << point.first.second;
         cout << " Centroide: " << point.second << endl;
     }
+
+    save_result(centroids, data, m, K);
+}
+
+point read_data(){
+    point data;
+    TYPE_DATA x, y;
+    simple_point positions;
+    int size;
+    cin >> size;
+    for(int i = 0; i < size; i++) {
+        cin >> x >> y;
+        positions = make_pair(x,y);
+        data.insert(make_pair(positions, "none"));
+    }
+
+    return data;
+}
+
+int getGraphSize(point data) {
+    int biggest = 0;
+    for(auto& point: data) {
+        if(point.first.first > biggest)
+            biggest = point.first.first;
+    }
+
+    return biggest;
 }
 
 int main() {
-    const int K = 2;
+    const int K = 15;
     point data;
-    vector<simple_point> point;
 
-    point.push_back(make_pair(0,1));
-    point.push_back(make_pair(1,0));
-    point.push_back(make_pair(1,3));
-    point.push_back(make_pair(3,1));
-    point.push_back(make_pair(4,2));
-    point.push_back(make_pair(4,3));
+    
 
-    for(int i = 0; i < point.size(); i++) {
-        data.insert(make_pair(point[i],"none"));
-    }
+    cout << "LENDO ENTRADA" << endl;
+    data = read_data();
 
-    string labels[2] = {"azul", "vermelho"};
-    kmeans(K, data, labels);
+    int size = getGraphSize(data);
+    kmeans(K, data, size);
 
     return 0;
 }

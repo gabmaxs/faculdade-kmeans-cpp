@@ -1,2 +1,4 @@
 .vscode
-kmeans.exe
+kmeans
+/saidas/*.txt
+node_modules/
