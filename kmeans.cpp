@@ -135,53 +135,17 @@ void save_result(point centroids, point data, int number_time, int K, string fil
     myfile.close();
 }
 
-void kmeans(const int K, point data, int size, string file_name){
-    cout << "INICIANDO KMEANS" << endl;
-
-    // cout << "IMPRIMINDO DADOS" << endl;
-    // for(auto& point: data){
-    //     cout << "X: " << point.first.first << " Y: " << point.first.second << endl;
-    // }
-
-    cout << "GERANDO CENTROIDES" << endl;
+vector<point> kmeans(const int K, point data, int size, string file_name){
     point centroids = generate_centroids(K, size);
     point copy_centroids = centroids;
     point new_centroids;
     
-    // cout << "IMPRIMINDO CENTROIDES" << endl;
-    // for(auto& centroid: centroids){
-    //     cout << "COR: " << centroid.second << " X: " << centroid.first.first << " Y: " << centroid.first.second << endl;
-    // }
-
-    cout << "ATUALIZANDO CENTROIDE - INICIAL" << endl;
     for(auto& point: data) {
         point.second = get_new_centroid(point.first, centroids);
     }
-
-    // cout << "IMPRIMINDO CENTROIDE - INICIAL" << endl;
-    // for(auto& point: data) {
-    //     cout << "PONTO ";
-    //     cout << "X: " << point.first.first << " Y: " << point.first.second;
-    //     cout << " Centroide " << point.second << endl;
-    // }
     int m = 0;
     do {
         copy_centroids = centroids;
-        // cout << "ERA: " << m+1 << endl;
-        // cout << "IMPRIMINDO CENTROIDES ERA :" << m+1 << endl;
-        // for(auto& centroid: centroids){
-        //     cout << "COR: " << centroid.second << " X: " << centroid.first.first << " Y: " << centroid.first.second << endl;
-        // }
-
-        // cout << "IMPRIMINDO CENTROIDE ANTES" << endl;
-        // cout << "IMPRIMINDO  PONTOS" << endl;
-        // for(auto& point: data) {
-        //     cout << "PONTO ";
-        //     cout << "X: " << point.first.first << " Y: " << point.first.second;
-        //     cout << " Centroide: " << point.second << endl;
-        // }
-
-        // cout << "ANDANDO O CENTROIDE" << endl;
         for(auto& centroid: centroids) {
             string color = centroid.second;
             simple_point new_point = move_centroids(centroid, data);
@@ -191,16 +155,7 @@ void kmeans(const int K, point data, int size, string file_name){
         centroids.clear();
         centroids = new_centroids;
         new_centroids.clear();
-        
-        // cout << "IMPRIMINDO CENTROIDE DEPOIS" << endl;
-        // cout << "ERA: " << m+1 << endl;
-        // for(auto& centroid: centroids) {
-        //     cout << "PONTO ";
-        //     cout << "X: " << centroid.first.first << " Y: " << centroid.first.second;
-        //     cout << " Centroide " << centroid.second << endl;
-        // }
 
-        // cout << "ATUALIZANDO CETROIDE" << endl;
         for(auto& point: data) {
             point.second = get_new_centroid(point.first, centroids);
         }
@@ -208,23 +163,13 @@ void kmeans(const int K, point data, int size, string file_name){
         m++;
     }while(centroids_change(centroids, copy_centroids));
 
-    cout << endl;
-    cout << "RESULTADOS FINAIS" << endl;
-    cout << "ERAS NECESSARIAS " << m << endl;
-
-    cout << "IMPRIMINDO CENTROIDES" << endl;
-    for(auto& centroid: centroids){
-        cout << "COR: " << centroid.second << " X: " << centroid.first.first << " Y: " << centroid.first.second << endl;
-    }
-
-    cout << "IMPRIMINDO  PONTOS" << endl;
-    for(auto& point: data) {
-        cout << "PONTO ";
-        cout << "X: " << point.first.first << " Y: " << point.first.second;
-        cout << " Centroide: " << point.second << endl;
-    }
-
     save_result(centroids, data, m, K, file_name);
+
+    vector<point> result;
+    result.push_back(centroids);
+    result.push_back(data);
+
+    return result;
 }
 
 point read_data(){
@@ -255,6 +200,7 @@ int getGraphSize(point data) {
 int main(int argc, char *argv[]) {
     const int K = 15;
     point data;
+    vector<point> result;
 
     string file = "saida.txt";
 
@@ -262,11 +208,30 @@ int main(int argc, char *argv[]) {
         file = argv[2];
     }
     
-    cout << "LENDO ENTRADA" << endl;
     data = read_data();
 
     int size = getGraphSize(data);
-    kmeans(K, data, size, file);
+    result = kmeans(K, data, size, file);
+
+    if(argc > 3) {
+        if(argv[3] == string("-v")) {
+            cout << endl;
+            cout << "RESULTADOS FINAIS" << endl;
+
+            cout << "IMPRIMINDO CENTROIDES" << endl;
+            for(auto& centroid: result[0]){
+                cout << "CENTROIDE";
+                cout << "COR: " << centroid.second << " X: " << centroid.first.first << " Y: " << centroid.first.second << endl;
+            }
+
+            cout << "IMPRIMINDO  PONTOS" << endl;
+            for(auto& point: result[1]) {
+                cout << "PONTO ";
+                cout << "X: " << point.first.first << " Y: " << point.first.second;
+                cout << " Centroide: " << point.second << endl;
+            }
+        }
+    }
 
     return 0;
 }
