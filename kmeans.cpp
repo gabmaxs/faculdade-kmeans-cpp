@@ -194,14 +194,43 @@ point read_data(){
 }
 
 int main(int argc, char *argv[]) {
-    const int K = 10;
+
+    int K;
     point data;
     vector<point> result;
 
     string file = "saida.txt";
 
-    if(argv[1] == string("-f")) {
-        file = argv[2];
+    if(argc > 2) {
+        if(argv[1] == string("-op")){
+            if (argv[2] == string("1"))
+            {
+                K = 12;
+            }
+            else if(argv[2] == string("2")) {
+                K = 11;
+            } 
+            else if (argv[2] == string("3")) {
+                K = 11;
+            }
+            else if (argv[2] == string("4")){
+                K = 10;
+            }
+            else {
+                cout << "Valor invalido para opcao" << endl;
+                exit(1);
+            }
+        } 
+    }
+    else {
+        cout << "Argumento -op é obrigatorio" << endl;
+        exit(1);
+    }
+
+    if(argc > 3) {
+        if(argv[3] == string("-f")) {
+            file = argv[4];
+        }
     }
     
     data = read_data();
@@ -210,8 +239,8 @@ int main(int argc, char *argv[]) {
 
     save_result(result[0], result[1], K, file);
 
-    if(argc > 3) {
-        if(argv[3] == string("-v")) {
+    if(argc > 5) {
+        if(argv[5] == string("-v")) {
             cout << endl;
             cout << "RESULTADOS FINAIS" << endl;
 
