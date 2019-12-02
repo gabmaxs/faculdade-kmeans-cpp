@@ -3,7 +3,7 @@
 ## DESCRIÇÃO
 <p>Implementação do K means para clusterização de 4 bases de dados teste, utilizando a linguagem C++ e desenvolvido por: </p>
 <ul>
-    <li>Gabriel Maximiniano - [GitHub](https://github.com/gabmaxs)[Twitter](https://twitter.com/gabmaxs_) </li>
+    <li>Gabriel Maximiniano - [GitHub](https://github.com/gabmaxs) [Twitter](https://twitter.com/gabmaxs_) </li>
 </ul>
 <p> Desenvolvido para a disciplina SIN 460 - Mineração de Dados do curso de Sistemas de Informação da UFV-CRP.</p>
 
