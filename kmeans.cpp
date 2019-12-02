@@ -144,7 +144,6 @@ int getGraphSize(point data) {
 
 vector<point> kmeans(const int K, point data){
     int size = getGraphSize(data);
-    cout << size << endl;
     point centroids = generate_centroids(K, size);
     point copy_centroids = centroids;
     point new_centroids;
