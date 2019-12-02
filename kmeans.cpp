@@ -92,13 +92,12 @@ simple_point move_centroids(pair<simple_point, string> centroid, point points) {
     return new_position;
 }
 
-void save_result(point centroids, point data, int number_time, int K, string file_name) {
+void save_result(point centroids, point data, int K, string file_name) {
 
     ofstream myfile;
     myfile.open("saidas/" + file_name);
 
     myfile << "RESULTADOS FINAIS" << endl;
-    myfile << "ERAS NECESSARIAS " << number_time << endl;
 
     myfile << "IMPRIMINDO CENTROIDES" << endl;
     for(auto& centroid: centroids){
@@ -118,8 +117,6 @@ void save_result(point centroids, point data, int number_time, int K, string fil
 
     myfile.open("saidas_numeros/" + file_name);
 
-    myfile << number_time << endl;
-
     myfile << K << endl;
 
 
@@ -135,7 +132,19 @@ void save_result(point centroids, point data, int number_time, int K, string fil
     myfile.close();
 }
 
-vector<point> kmeans(const int K, point data, int size, string file_name){
+int getGraphSize(point data) {
+    int biggest = 0;
+    for(auto& point: data) {
+        if(point.first.first > biggest)
+            biggest = point.first.first;
+    }
+
+    return biggest;
+}
+
+vector<point> kmeans(const int K, point data){
+    int size = getGraphSize(data);
+    cout << size << endl;
     point centroids = generate_centroids(K, size);
     point copy_centroids = centroids;
     point new_centroids;
@@ -163,8 +172,6 @@ vector<point> kmeans(const int K, point data, int size, string file_name){
         m++;
     }while(centroids_change(centroids, copy_centroids));
 
-    save_result(centroids, data, m, K, file_name);
-
     vector<point> result;
     result.push_back(centroids);
     result.push_back(data);
@@ -187,18 +194,8 @@ point read_data(){
     return data;
 }
 
-int getGraphSize(point data) {
-    int biggest = 0;
-    for(auto& point: data) {
-        if(point.first.first > biggest)
-            biggest = point.first.first;
-    }
-
-    return biggest;
-}
-
 int main(int argc, char *argv[]) {
-    const int K = 15;
+    const int K = 10;
     point data;
     vector<point> result;
 
@@ -210,8 +207,9 @@ int main(int argc, char *argv[]) {
     
     data = read_data();
 
-    int size = getGraphSize(data);
-    result = kmeans(K, data, size, file);
+    result = kmeans(K, data);
+
+    save_result(result[0], result[1], K, file);
 
     if(argc > 3) {
         if(argv[3] == string("-v")) {

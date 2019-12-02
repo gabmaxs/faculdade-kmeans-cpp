@@ -2,7 +2,6 @@
 
 const my_data = []
 const clusters = []
-let number_of_times
 let number_clusters
 
 const createClusters = (cluster) => {
@@ -38,7 +37,7 @@ const initGraph = () => {
     const ctxBefore = document.getElementById('chartBefore')
     ctxBefore.style.display = "block"
 
-    new Chart(ctxBefore, {
+    const chartBefore = new Chart(ctxBefore, {
         type: 'scatter',
         data: {
             labels: "",
@@ -59,12 +58,13 @@ const initGraph = () => {
             }
         }
     })
+    chartBefore.update()
 
 
     const ctx = document.getElementById('chart')
     ctx.style.display = "block"
 
-    new Chart(ctx, {
+    const chartAfter = new Chart(ctx, {
         type: 'scatter',
         data: {
             labels: "",
@@ -95,6 +95,12 @@ const initGraph = () => {
             }
         }
     })
+    chartAfter.update()
+}
+
+const cleanData = () => {
+    my_data.length = 0
+    clusters.length = 0
 }
 
 const openFile = function(event) {
@@ -103,14 +109,14 @@ const openFile = function(event) {
     const reader = new FileReader()
     reader.onload = function () {
         const text = reader.result.split("\n")
-        number_of_times = text[0]
-        number_clusters = parseInt(text[1])
-        for(let i = 2; i < number_clusters + 2; i++) {
+        number_clusters = parseInt(text[0])
+        cleanData()
+        for(let i = 1; i < number_clusters + 1; i++) {
             const cluster = text[i].split(" ")
             createClusters(cluster)
         }
 
-        for(let i = number_clusters + 2; i < text.length-1; i++){
+        for(let i = number_clusters + 1; i < text.length-1; i++){
             const point = text[i].split(" ")
             createPoint(point)
         }
