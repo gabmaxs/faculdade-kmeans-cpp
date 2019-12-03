@@ -211,10 +211,10 @@ int main(int argc, char *argv[]) {
                 K = 11;
             } 
             else if (argv[2] == string("3")) {
-                K = 11;
+                K = 10;
             }
             else if (argv[2] == string("4")){
-                K = 10;
+                K = 9;
             }
             else {
                 cout << "Valor invalido para opcao" << endl;
