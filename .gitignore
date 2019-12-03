@@ -2,5 +2,5 @@
 kmeans
 /saidas/*.txt
 node_modules/
-saidas/
-saidas_numeros/
+saidas/*
+saidas_numeros/*
